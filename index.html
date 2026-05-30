@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baby Massage Center - Professional Massaj Markazi</title>
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glows & Particles -->
+  <div class="bg-decorations">
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+  </div>
+  
+  <!-- Floating Bubbles Container (Populated by JS) -->
+  <div class="bubbles-container" id="bubbles-container"></div>
+  
+  <!-- Floating Green Leaves Container (Populated by JS) -->
+  <div class="leaves-container" id="leaves-container"></div>
+
+  <!-- Header Navigation -->
+  <header id="main-header">
+    <a href="#home" class="logo" id="logo-link">
+      <i class="fa-solid fa-hands-holding-child logo-icon"></i>
+      <div class="logo-text">
+        <h1 id="header-brand-name">Baby Massage Center</h1>
+        <span>Sog'lom kelajak poydevori</span>
+      </div>
+    </a>
+    
+    <ul class="nav-links">
+      <li><a href="#home" class="nav-link active" data-view="home"><i class="fa-solid fa-house"></i> Bosh sahifa</a></li>
+      <li><a href="#prices" class="nav-link" data-view="prices"><i class="fa-solid fa-wallet"></i> Narxlar</a></li>
+      <li><a href="#contact" class="nav-link" data-view="contact"><i class="fa-solid fa-map-location-dot"></i> Aloqa</a></li>
+      <li><a href="#booking" class="nav-link" data-view="booking"><i class="fa-solid fa-calendar-check"></i> Bron qilish</a></li>
+    </ul>
+    
+    <div class="header-right">
+      <a href="tel:+998998790676" class="phone-badge" id="header-phone-badge">
+        <i class="fa-solid fa-phone"></i> <span id="header-phone-text">+998 99 879 06 76</span>
+      </a>
+      
+      <button class="btn-profile" id="profile-btn" onclick="app.navigateToAuthOrDashboard()">
+        <i class="fa-solid fa-circle-user"></i>
+        <span id="profile-btn-text">Kirish</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SPA Views Container -->
+  <main id="app-container">
+
+    <!-- 1. LANDING PAGE VIEW -->
+    <section id="home-view" class="spa-view active">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <i class="fa-solid fa-sparkles"></i> Antigravity Premium Xizmatlar
+          </div>
+          <h2 class="hero-title" id="hero-title-text">Baby Massage Center</h2>
+          <p class="hero-subtitle">Bolalar va ayollar salomatligi uchun professional, sertifikatlangan shifokorlar tomonidan massaj xizmatlari</p>
+          <div class="hero-actions">
+            <a href="#booking" class="btn btn-primary"><i class="fa-solid fa-calendar-days"></i> Bron qilish</a>
+            <a href="#prices" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Narxlar ro'yxati</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Info Banner (Uzum Tezkor style) -->
+      <div class="info-banner-container">
+        <div class="info-banner glass-panel">
+          <div class="info-item">
+            <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="info-text">
+              <h4>Manzil</h4>
+              <p id="banner-address">Yangi hayot tumani, Sputnik 16a, 25-uy</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon"><i class="fa-solid fa-phone-volume"></i></div>
+            <div class="info-text">
+              <h4>Telefon</h4>
+              <p id="banner-phone">+998 99 879 06 76</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+            <div class="info-text">
+              <h4>Ish vaqti</h4>
+              <p id="banner-hours">Har kuni 08:00 — 18:00</p>
+            </div>
+          </div>
+          
+          <a href="tel:+998998790676" class="btn btn-gold btn-sm" id="banner-call-btn">
+            <i class="fa-solid fa-phone"></i> Qo'ng'iroq qilish
+          </a>
+        </div>
+      </div>
+      
+      <!-- Statistics Section -->
+      <div class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card glass-panel">
+            <span class="stat-num">500+</span>
+            <span class="stat-label">Mamnun mijoz</span>
+          </div>
+          <div class="stat-card glass-panel">
+            <span class="stat-num">5 Yil</span>
+            <span class="stat-label">Ish tajribasi</span>
+          </div>
+          <div class="stat-card glass-panel">
+            <span class="stat-num">1 Ta</span>
+            <span class="stat-label">Zamonaviy filial</span>
+          </div>
+          <div class="stat-card glass-panel">
+            <span class="stat-num">08:00-18:00</span>
+            <span class="stat-label">Ish vaqti (Har kuni)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Features Section -->
+      <div class="features-section">
+        <div class="section-header">
+          <h2>Nega aynan biz?</h2>
+          <p>Mijozlarimizga eng yuqori darajada xavfsiz va samarali massaj muolajalarini taqdim etamiz</p>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card glass-panel" onclick="app.quickAction('booking', 'children')">
+            <div class="feature-icon-wrapper"><i class="fa-solid fa-baby"></i></div>
+            <h3>Bolalar massaji</h3>
+            <p>Go'daklarning jismoniy rivojlanishi, mushak tonusi va umumiy to'g'ri o'sishi uchun professional massaj.</p>
+          </div>
+          
+          <div class="feature-card glass-panel" onclick="app.quickAction('booking', 'women')">
+            <div class="feature-icon-wrapper"><i class="fa-solid fa-person-dress"></i></div>
+            <h3>Ayollar massaji</h3>
+            <p>Stressdan xalos bo'lish, charchoqni olish va tana a'zolari faoliyatini tiklash uchun maxsus muolajalar.</p>
+          </div>
+          
+          <div class="feature-card glass-panel">
+            <div class="feature-icon-wrapper"><i class="fa-solid fa-award"></i></div>
+            <h3>Tibbiy sertifikat</h3>
+            <p>Barcha mutaxassislarimiz maxsus tibbiy ma'lumot va sertifikatlarga ega professional shifokorlardir.</p>
+          </div>
+          
+          <div class="feature-card glass-panel">
+            <div class="feature-icon-wrapper"><i class="fa-solid fa-star"></i></div>
+            <h3>5 Yulduzli xizmat</h3>
+            <p>Shaxsiy yondashuv, qulay gigiyenik sharoitlar va oilaviy muhitda xizmat ko'rsatish.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PRICES PAGE VIEW -->
+    <section id="prices-view" class="spa-view">
+      <div class="prices-container">
+        <div class="section-header">
+          <h2>Xizmatlar va Narxlar</h2>
+          <p>Sizga mos bo'lgan massaj turini tanlang va tezkor bron qiling</p>
+        </div>
+        
+        <!-- Category Toggle -->
+        <div class="category-toggle-container">
+          <div class="category-tabs">
+            <button class="tab-btn active" id="tab-btn-children" onclick="app.togglePriceCategory('children')">
+              <i class="fa-solid fa-baby"></i> Bolalar massaji
+            </button>
+            <button class="tab-btn" id="tab-btn-women" onclick="app.togglePriceCategory('women')">
+              <i class="fa-solid fa-person-dress"></i> Ayollar massaji
+            </button>
+          </div>
+        </div>
+        
+        <!-- Dynamic Prices Grid -->
+        <div class="prices-grid" id="prices-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LOGIN / SIGN IN VIEW -->
+    <section id="login-view" class="spa-view">
+      <div class="auth-container">
+        <!-- Auth View Switcher Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="auth-tab-client" onclick="app.switchAuthTab('client')">Mijoz</button>
+          <button class="auth-tab-btn" id="auth-tab-register" onclick="app.switchAuthTab('register')">Ro'yxatdan o'tish</button>
+          <button class="auth-tab-btn" id="auth-tab-worker" onclick="app.switchAuthTab('worker')">Xodim / Admin</button>
+        </div>
+        
+        <!-- Client / Worker / Admin login Card -->
+        <div class="auth-card glass-panel" id="auth-form-card">
+          <!-- Client Login Form -->
+          <div id="client-login-form-block">
+            <h3 class="auth-title">Mijoz Tizimga Kirish</h3>
+            <p class="auth-subtitle">Telefon raqamingiz va parolingiz orqali kiring</p>
+            
+            <form onsubmit="app.handleClientLogin(event)">
+              <div class="form-group">
+                <label for="client-phone">Telefon raqam</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="text" id="client-phone" class="form-control" placeholder="+998 90 123 45 67" required value="+998901234567">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="client-password">Parol</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-lock"></i>
+                  <input type="password" id="client-password" class="form-control" placeholder="•••••" required value="12345">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary auth-submit-btn">Tizimga kirish</button>
+            </form>
+          </div>
+          
+          <!-- Registration Form -->
+          <div id="client-register-form-block" style="display: none;">
+            <h3 class="auth-title">Yangi Mijoz Yaratish</h3>
+            <p class="auth-subtitle">Profil yaratib, xizmatlarni osongina bron qiling</p>
+            
+            <form onsubmit="app.handleClientRegister(event)">
+              <div class="form-group">
+                <label for="reg-name">Ismingiz</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-user"></i>
+                  <input type="text" id="reg-name" class="form-control" placeholder="Ali Valiyev" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reg-phone">Telefon raqamingiz</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="text" id="reg-phone" class="form-control" placeholder="+998 99 123 45 67" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reg-password">Parol yarating</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-lock"></i>
+                  <input type="password" id="reg-password" class="form-control" placeholder="Kamida 4 ta belgi" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary auth-submit-btn">Ro'yxatdan o'tish</button>
+            </form>
+          </div>
+          
+          <!-- Staff Login Form -->
+          <div id="staff-login-form-block" style="display: none;">
+            <h3 class="auth-title">Ishchi va Admin Kirish</h3>
+            <p class="auth-subtitle">Xizmat xodimlari va administrator paneli</p>
+            
+            <form onsubmit="app.handleStaffLogin(event)">
+              <div class="form-group">
+                <label for="staff-username">Login / Foydalanuvchi nomi</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-user-shield"></i>
+                  <input type="text" id="staff-username" class="form-control" placeholder="malika / admin" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="staff-password">Parol</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-lock"></i>
+                  <input type="password" id="staff-password" class="form-control" placeholder="•••••" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gold auth-submit-btn">Panelga kirish</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. BOOKING VIEW (BRON QILISH) -->
+    <section id="booking-view" class="spa-view">
+      <div class="booking-container">
+        <div class="section-header">
+          <h2>Massajga yozilish</h2>
+          <p>Tafsilotlarni tanlang va bir necha soniyada navbat oling</p>
+        </div>
+        
+        <!-- Multi-step Progress indicator -->
+        <div class="booking-progress">
+          <div class="progress-step active" id="prog-step-1">1</div>
+          <div class="progress-step" id="prog-step-2">2</div>
+          <div class="progress-step" id="prog-step-3">3</div>
+        </div>
+        
+        <div class="glass-panel">
+          <form onsubmit="app.handleBookingSubmit(event)">
+            
+            <!-- Step 1: Service Category and Exact Massage -->
+            <div id="booking-step-content-1">
+              <h3 class="form-title" style="margin-bottom: 1.5rem;"><i class="fa-solid fa-circle-1"></i> Xizmat turini tanlang</h3>
+              
+              <div class="service-type-selector">
+                <div class="type-select-card active" id="select-type-children" onclick="app.setBookingCategory('children')">
+                  <i class="fa-solid fa-baby"></i>
+                  <h3>Bolalar massaji</h3>
+                </div>
+                <div class="type-select-card" id="select-type-women" onclick="app.setBookingCategory('women')">
+                  <i class="fa-solid fa-person-dress"></i>
+                  <h3>Ayollar massaji</h3>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="booking-service">Aniq xizmat turi</label>
+                <select id="booking-service" class="form-control" style="padding-left: 1.2rem;" onchange="app.updateBookingSummary()" required>
+                  <!-- Populated by JS based on category -->
+                </select>
+              </div>
+              
+              <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn btn-primary" onclick="app.nextBookingStep(2)">Keyingi <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+            
+            <!-- Step 2: Date, Time and Worker selection -->
+            <div id="booking-step-content-2" style="display: none;">
+              <h3 class="form-title" style="margin-bottom: 1.5rem;"><i class="fa-solid fa-circle-2"></i> Sana va Vaqtni tanlang</h3>
+              
+              <div class="form-group">
+                <label for="booking-date">Sana</label>
+                <div class="form-control-wrapper">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <input type="date" id="booking-date" class="form-control" onchange="app.loadAvailableTimeSlots()" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="booking-worker">Mutaxassis xodim</label>
+                <select id="booking-worker" class="form-control" style="padding-left: 1.2rem;" onchange="app.loadAvailableTimeSlots()" required>
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Bo'sh vaqtlar (Ish vaqti: 08:00 - 18:00 orasida)</label>
+                <div class="slots-grid" id="booking-slots-grid">
+                  <!-- Time Slot buttons populated dynamically -->
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;"><i class="fa-solid fa-info-circle"></i> Oxirgi bron vaqti 17:00 (1 soatlik muolaja uchun)</p>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="app.nextBookingStep(1)"><i class="fa-solid fa-arrow-left"></i> Orqaga</button>
+                <button type="button" class="btn btn-primary" onclick="app.nextBookingStep(3)">Keyingi <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+            
+            <!-- Step 3: Comments & Confirmation -->
+            <div id="booking-step-content-3" style="display: none;">
+              <h3 class="form-title" style="margin-bottom: 1.5rem;"><i class="fa-solid fa-circle-3"></i> Tafsilotlar va tasdiqlash</h3>
+              
+              <div class="form-group">
+                <label for="booking-comment">Qo'shimcha izoh (ixtiyoriy)</label>
+                <textarea id="booking-comment" class="form-control" rows="3" style="padding-left: 1.2rem;" placeholder="Masalan: bola bezovta, parafin bilan birga..."></textarea>
+              </div>
+              
+              <!-- Booking Summary Details Card -->
+              <div class="booking-summary-card">
+                <h4 style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;"><i class="fa-solid fa-file-invoice"></i> Bron ma'lumotlari</h4>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Mijoz:</span>
+                  <span class="summary-value" id="sum-client-name">-</span>
+                </div>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Telefon:</span>
+                  <span class="summary-value" id="sum-client-phone">-</span>
+                </div>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Xizmat:</span>
+                  <span class="summary-value" id="sum-service-name">-</span>
+                </div>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Sana va Vaqt:</span>
+                  <span class="summary-value" id="sum-date-time">-</span>
+                </div>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Mutaxassis:</span>
+                  <span class="summary-value" id="sum-worker-name">-</span>
+                </div>
+                
+                <div class="summary-row">
+                  <span class="summary-label">Umumiy to'lov:</span>
+                  <span class="summary-value summary-total" id="sum-price-total">0 so'm</span>
+                </div>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="app.nextBookingStep(2)"><i class="fa-solid fa-arrow-left"></i> Orqaga</button>
+                <button type="submit" class="btn btn-gold"><i class="fa-solid fa-check-double"></i> Tasdiqlash va Bron qilish</button>
+              </div>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4a. CLIENT DASHBOARD VIEW ("Mening bronlarim") -->
+    <section id="client-dashboard-view" class="spa-view">
+      <div class="client-dashboard-container">
+        <div class="dashboard-header">
+          <div class="dashboard-user-info">
+            <div class="avatar-large" id="client-avatar-letter">U</div>
+            <div>
+              <h2 id="client-welcome-name">Xush kelibsiz, Mijoz!</h2>
+              <p id="client-welcome-phone" style="color: var(--text-muted); font-size: 0.9rem;">+998 90 123 45 67</p>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="app.handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+        </div>
+        
+        <div class="glass-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h3 style="font-family: var(--font-title);"><i class="fa-solid fa-receipt"></i> Sizning bronlaringiz</h3>
+            <a href="#booking" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Yangi yozilish</a>
+          </div>
+          
+          <div class="bookings-table-wrapper">
+            <table class="custom-table" id="client-bookings-table">
+              <thead>
+                <tr>
+                  <th>Xizmat</th>
+                  <th>Sana va Vaqt</th>
+                  <th>Mutaxassis</th>
+                  <th>Narxi</th>
+                  <th>Holati</th>
+                  <th>Amal</th>
+                </tr>
+              </thead>
+              <tbody id="client-bookings-tbody">
+                <!-- Loaded dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. WORKER DASHBOARD VIEW (Xodim paneli) -->
+    <section id="worker-view" class="spa-view">
+      <div class="worker-dashboard-container">
+        <div class="dashboard-header">
+          <div class="dashboard-user-info">
+            <div class="avatar-large" id="worker-avatar-letter">M</div>
+            <div>
+              <h2 id="worker-welcome-name">Xush kelibsiz, Malika!</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Mutaxassis paneli</p>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="app.handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+        </div>
+        
+        <!-- Worker Statistics summary -->
+        <div class="worker-stats-row">
+          <div class="glass-panel stat-card">
+            <span class="stat-num" id="worker-stats-today">0</span>
+            <span class="stat-label">Bugungi bronlar</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-num" id="worker-stats-week">0</span>
+            <span class="stat-label">Haftalik bronlar</span>
+          </div>
+          <div class="glass-panel stat-card">
+            <span class="stat-num" id="worker-stats-month">0</span>
+            <span class="stat-label">Aylik yakunlangan</span>
+          </div>
+        </div>
+        
+        <!-- Two Column Dashboard layout -->
+        <div class="worker-card-grid">
+          <!-- Column 1: Today's Bookings List -->
+          <div class="glass-panel">
+            <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-calendar-day"></i> Bugungi mijozlar jadvali</h3>
+            
+            <div class="bookings-table-wrapper">
+              <table class="custom-table" id="worker-bookings-table">
+                <thead>
+                  <tr>
+                    <th>Vaqt</th>
+                    <th>Mijoz</th>
+                    <th>Xizmat</th>
+                    <th>Holati</th>
+                    <th>Harakat</th>
+                  </tr>
+                </thead>
+                <tbody id="worker-bookings-tbody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Column 2: Weekly Schedule Overview -->
+          <div class="glass-panel worker-schedule-card">
+            <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-calendar-week"></i> Haftalik reja</h3>
+            <div class="worker-schedule-list" id="worker-schedule-hours">
+              <!-- Dynamically renders hourly slots for today -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Procedure Notes Log Section -->
+        <div class="glass-panel" style="margin-top: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-family: var(--font-title);"><i class="fa-solid fa-notes-medical"></i> Protsedura yozuvlari</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Tasdiqlangan bronlar uchun protsedura natijasini yozing</span>
+          </div>
+          <div class="bookings-table-wrapper">
+            <table class="custom-table" id="worker-procedure-table">
+              <thead>
+                <tr>
+                  <th>Vaqt</th>
+                  <th>Mijoz</th>
+                  <th>Xizmat</th>
+                  <th>Narxi</th>
+                  <th>Protsedura natijasi</th>
+                  <th>Amal</th>
+                </tr>
+              </thead>
+              <tbody id="worker-procedure-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Monthly Earnings Summary for Worker -->
+        <div class="glass-panel" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(30,58,138,0.15));">
+          <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-wallet"></i> Mening oylik daromadam (50% ulush)</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+            <div class="stat-card" style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+              <span class="stat-num" id="worker-earn-month" style="font-size: 1.3rem; color: var(--accent-gold);">0 UZS</span>
+              <span class="stat-label">Oylik ulushim (50%)</span>
+            </div>
+            <div class="stat-card" style="background: rgba(255,255,255,0.05); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+              <span class="stat-num" id="worker-earn-total" style="font-size: 1.3rem;">0 UZS</span>
+              <span class="stat-label">Jami bajarilgan (oy)</span>
+            </div>
+            <div class="stat-card" style="background: rgba(255,255,255,0.05); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+              <span class="stat-num" id="worker-earn-count" style="font-size: 1.3rem;">0</span>
+              <span class="stat-label">Bajarilgan protseduralar</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. ADMIN DASHBOARD VIEW (Admin panel) -->
+    <section id="admin-view" class="spa-view">
+      <div class="admin-layout">
+        <!-- Sidebar Menu -->
+        <aside class="admin-sidebar">
+          <div style="text-align: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <i class="fa-solid fa-user-gear" style="font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 0.5rem;"></i>
+            <h3>Admin Panel</h3>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">Baby Massage Center</span>
+          </div>
+          
+          <ul class="admin-sidebar-menu">
+            <li><a class="sidebar-link active" onclick="app.switchAdminSection('stats')"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('bookings')"><i class="fa-solid fa-book-bookmark"></i> Barcha bronlar</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('clients')"><i class="fa-solid fa-users"></i> Mijozlar</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('workers')"><i class="fa-solid fa-user-md"></i> Ishchilar</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('revenue')"><i class="fa-solid fa-chart-line"></i> Daromad</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('services')"><i class="fa-solid fa-tags"></i> Xizmatlar & Narxlar</a></li>
+            <li><a class="sidebar-link" onclick="app.switchAdminSection('settings')"><i class="fa-solid fa-gears"></i> Sozlamalar</a></li>
+            <li style="margin-top: 1.5rem;"><a class="sidebar-link" style="color: #EF4444;" onclick="app.handleLogout()"><i class="fa-solid fa-power-off"></i> Chiqish</a></li>
+          </ul>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <div class="admin-content">
+          
+          <!-- 6.1 Stats Sub-view -->
+          <div id="admin-view-stats" class="admin-section-view active">
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Boshqaruv Paneli</h2>
+            
+            <div class="admin-stats-grid">
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="admin-kpi-bookings">0</span>
+                <span class="stat-label">Bugungi bronlar</span>
+              </div>
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="admin-kpi-revenue">0 UZS</span>
+                <span class="stat-label">Bu oylik daromad</span>
+              </div>
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="admin-kpi-clients">0</span>
+                <span class="stat-label">Jami mijozlar</span>
+              </div>
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="admin-kpi-workers">2</span>
+                <span class="stat-label">Aktiv ishchilar</span>
+              </div>
+            </div>
+            
+            <div class="glass-panel" style="margin-top: 2rem;">
+              <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-bell"></i> Oxirgi faolliklar (So'nggi bronlar)</h3>
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Mijoz</th>
+                      <th>Xizmat</th>
+                      <th>Sana & Vaqt</th>
+                      <th>Xodim</th>
+                      <th>Narxi</th>
+                      <th>Holati</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-recent-bookings-tbody">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.2 Bookings Sub-view -->
+          <div id="admin-view-bookings" class="admin-section-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+              <h2 style="font-family: var(--font-title);">Barcha Bronlar</h2>
+              <div style="display: flex; gap: 1rem;">
+                <select id="admin-bookings-filter-status" class="form-control" style="width: 180px; padding-left: 1rem;" onchange="app.renderAdminBookings()">
+                  <option value="all">Barchasi</option>
+                  <option value="pending">⏳ Kutilmoqda</option>
+                  <option value="confirmed">✅ Tasdiqlangan</option>
+                  <option value="cancelled">❌ Bekor qilingan</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="glass-panel">
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Mijoz</th>
+                      <th>Telefon</th>
+                      <th>Xizmat</th>
+                      <th>Sana / Vaqt</th>
+                      <th>Xodim</th>
+                      <th>Holat</th>
+                      <th>Amallar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-all-bookings-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.3 Clients Sub-view -->
+          <div id="admin-view-clients" class="admin-section-view">
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Mijozlar Ro'yxati</h2>
+            
+            <div class="glass-panel">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                <input type="text" id="admin-client-search" class="form-control" style="max-width: 300px; padding-left: 1rem;" placeholder="Qidirish (ism yoki telefon)..." oninput="app.renderAdminClients()">
+              </div>
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Ismi</th>
+                      <th>Telefon raqami</th>
+                      <th>Jami buyurtmalari</th>
+                      <th>Ro'yxatdan o'tgan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-clients-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.4 Workers Sub-view -->
+          <div id="admin-view-workers" class="admin-section-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+              <h2 style="font-family: var(--font-title);">Ishchilar Boshqaruvi</h2>
+              <button class="btn btn-primary btn-sm" onclick="app.openAddWorkerModal()"><i class="fa-solid fa-plus"></i> Yangi xodim</button>
+            </div>
+            
+            <div class="glass-panel">
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Foydalanuvchi</th>
+                      <th>Login</th>
+                      <th>Rol</th>
+                      <th>Xizmat sohasi</th>
+                      <th>Harakat</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-workers-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.5 Revenue Sub-view -->
+          <div id="admin-view-revenue" class="admin-section-view">
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Daromad Hisoboti</h2>
+            
+            <!-- Summary KPI cards -->
+            <div class="admin-stats-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 2rem;">
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="rev-today">0 UZS</span>
+                <span class="stat-label">Bugungi daromad</span>
+              </div>
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="rev-week">0 UZS</span>
+                <span class="stat-label">Haftalik daromad</span>
+              </div>
+              <div class="glass-panel stat-card">
+                <span class="stat-num" id="rev-month">0 UZS</span>
+                <span class="stat-label">Oylik jami</span>
+              </div>
+            </div>
+
+            <!-- 50/50 Split Summary -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(30,58,138,0.2)); border: 1px solid rgba(59,130,246,0.3); text-align: center; padding: 2rem;">
+                <i class="fa-solid fa-building" style="font-size: 2rem; color: #3B82F6; margin-bottom: 0.8rem;"></i>
+                <div class="stat-num" id="rev-center-share" style="color: #3B82F6;">0 UZS</div>
+                <div class="stat-label">Markaz ulushi (50%)</div>
+              </div>
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(30,58,138,0.2)); border: 1px solid rgba(245,158,11,0.3); text-align: center; padding: 2rem;">
+                <i class="fa-solid fa-users" style="font-size: 2rem; color: var(--accent-gold); margin-bottom: 0.8rem;"></i>
+                <div class="stat-num" id="rev-workers-share" style="color: var(--accent-gold);">0 UZS</div>
+                <div class="stat-label">Ishchilar ulushi (50%)</div>
+              </div>
+            </div>
+
+            <!-- Per-worker earnings breakdown -->
+            <div class="glass-panel" style="margin-bottom: 2rem;">
+              <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-user-nurse"></i> Ishchi bo'yicha oylik hisob (50/50 taqsim)</h3>
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Ishchi ismi</th>
+                      <th>Bajarilgan protseduralar</th>
+                      <th>Jami summa</th>
+                      <th>Markaz ulushi (50%)</th>
+                      <th>Ishchi ulushi (50%)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-worker-revenue-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Services breakdown -->
+            <div class="glass-panel">
+              <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-money-check-dollar"></i> Xizmatlar bo'yicha ulush</h3>
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Xizmat nomi</th>
+                      <th>Sotilgan soni</th>
+                      <th>Jami tushum</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-revenue-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.6 Services & Prices Sub-view -->
+          <div id="admin-view-services" class="admin-section-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+              <h2 style="font-family: var(--font-title);">Xizmatlar va Narxlar Boshqaruvi</h2>
+              <button class="btn btn-primary btn-sm" onclick="app.openAddServiceModal()"><i class="fa-solid fa-plus"></i> Yangi xizmat</button>
+            </div>
+            
+            <div class="glass-panel">
+              <div class="bookings-table-wrapper">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Xizmat Nomi</th>
+                      <th>Turkum</th>
+                      <th>Narxi</th>
+                      <th>Amal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-services-tbody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 6.7 Settings Sub-view -->
+          <div id="admin-view-settings" class="admin-section-view">
+            <h2 style="font-family: var(--font-title); margin-bottom: 2rem;">Filial Sozlamalari</h2>
+            
+            <div class="glass-panel" style="max-width: 600px;">
+              <form onsubmit="app.handleSettingsSave(event)">
+                <div class="form-group">
+                  <label for="set-center-name">Markaz nomi</label>
+                  <input type="text" id="set-center-name" class="form-control" style="padding-left: 1.2rem;" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="set-center-phone">Telefon raqam</label>
+                  <input type="text" id="set-center-phone" class="form-control" style="padding-left: 1.2rem;" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="set-center-address">Manzil</label>
+                  <input type="text" id="set-center-address" class="form-control" style="padding-left: 1.2rem;" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="set-center-hours">Ish vaqti</label>
+                  <input type="text" id="set-center-hours" class="form-control" style="padding-left: 1.2rem;" required>
+                </div>
+                
+                <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-floppy-disk"></i> Sozlamalarni saqlash</button>
+              </form>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CONTACT PAGE VIEW -->
+    <section id="contact-view" class="spa-view">
+      <div class="contact-container">
+        <div class="section-header">
+          <h2>Biz bilan Bog'lanish</h2>
+          <p>Sizni har kuni markazimizda kutib qolamiz</p>
+        </div>
+        
+        <div class="contact-grid">
+          <!-- Contact details -->
+          <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-headset"></i> Aloqa ma'lumotlari</h3>
+              
+              <div class="info-item" style="margin-bottom: 1.5rem;">
+                <div class="info-icon"><i class="fa-solid fa-building"></i></div>
+                <div class="info-text">
+                  <h4>Markaz nomi</h4>
+                  <p id="contact-center-name">Baby Massage Center</p>
+                </div>
+              </div>
+              
+              <div class="info-item" style="margin-bottom: 1.5rem;">
+                <div class="info-icon"><i class="fa-solid fa-location-arrow"></i></div>
+                <div class="info-text">
+                  <h4>Manzil</h4>
+                  <p id="contact-address">Yangi hayot tumani, Sputnik 16a, 25-uy</p>
+                </div>
+              </div>
+              
+              <div class="info-item" style="margin-bottom: 1.5rem;">
+                <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                <div class="info-text">
+                  <h4>Telefon</h4>
+                  <p id="contact-phone">+998 99 879 06 76</p>
+                </div>
+              </div>
+              
+              <div class="info-item" style="margin-bottom: 1.5rem;">
+                <div class="info-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                <div class="info-text">
+                  <h4>Ish kunlari</h4>
+                  <p id="contact-hours">Har kuni 08:00 — 18:00 (Dam olish kunlarisiz)</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+              <a href="tel:+998998790676" class="btn btn-primary" style="flex: 1; min-width: 150px;" id="contact-call-btn">
+                <i class="fa-solid fa-phone"></i> Qo'ng'iroq qilish
+              </a>
+              <a href="https://yandex.com/maps/?text=Yangi+hayot+tumani,+Sputnik+16a,+Tashkent" target="_blank" class="btn btn-outline-gold" style="flex: 1; min-width: 150px;">
+                <i class="fa-solid fa-compass"></i> Yo'l ko'rsatish
+              </a>
+            </div>
+          </div>
+          
+          <!-- Map Embed Frame with Custom Pointer -->
+          <div class="map-wrapper">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3002.859664426573!2d69.20455581177651!3d41.20627797120786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae619553b6fa0f%3A0xe54d8702330a6de3!2sSputnik-16%2C%20Tashkent%2C%20Uzbekistan!5e0!3m2!1sen!2s!4v1716949392182!5m2!1sen!2s"
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            
+            <!-- Animated Custom Marker Pin overlay on map -->
+            <div class="map-pin-indicator">
+              <div class="pin-ring"></div>
+              <div class="pin-point"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Uzum Tezkor style Bottom Mobile Navigation Bar -->
+  <nav class="mobile-nav-bar">
+    <a class="mobile-nav-item active" data-view="home">
+      <i class="fa-solid fa-house"></i>
+      <span>Bosh sahifa</span>
+    </a>
+    <a class="mobile-nav-item" data-view="prices">
+      <i class="fa-solid fa-wallet"></i>
+      <span>Narxlar</span>
+    </a>
+    <a class="mobile-nav-item" data-view="booking">
+      <i class="fa-solid fa-calendar-plus"></i>
+      <span>Bron qilish</span>
+    </a>
+    <a class="mobile-nav-item" data-view="profile" onclick="app.navigateToAuthOrDashboard()">
+      <i class="fa-solid fa-circle-user"></i>
+      <span>Kabinet</span>
+    </a>
+    <a class="mobile-nav-item" data-view="contact">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Aloqa</span>
+    </a>
+  </nav>
+
+  <!-- Modal Pop-up (for warnings, alerts, edit/creation modals) -->
+  <div class="modal-overlay" id="app-modal">
+    <div class="modal-content glass-panel">
+      <button class="modal-close-btn" onclick="app.closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div id="modal-body-content">
+        <!-- Content gets loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>

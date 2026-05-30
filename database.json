@@ -1,0 +1,117 @@
+{
+  "center_info": {
+    "name": "Baby Massage Center",
+    "branches": 1,
+    "phone": "+998 99 879 06 76",
+    "address": "Yangi hayot tumani, Sputnik 16a, 25-uy",
+    "hours": "Har kuni 08:00 — 18:00"
+  },
+  "users": [
+    {
+      "role": "admin",
+      "username": "admin",
+      "password": "admin123",
+      "name": "Administrator"
+    },
+    {
+      "role": "client",
+      "name": "Mijoz",
+      "phone": "+998901234567",
+      "password": "12345"
+    }
+  ],
+  "services": [
+    {
+      "id": "c1",
+      "name": "2 oydan — 1 yoshgacha",
+      "price": 70000,
+      "category": "children"
+    },
+    {
+      "id": "c2",
+      "name": "1 yoshdan — 3 yoshgacha",
+      "price": 80000,
+      "category": "children"
+    },
+    {
+      "id": "c3",
+      "name": "4 yoshdan — 6 yoshgacha",
+      "price": 90000,
+      "category": "children"
+    },
+    {
+      "id": "c4",
+      "name": "6 yoshdan — 9 yoshgacha",
+      "price": 100000,
+      "category": "children"
+    },
+    {
+      "id": "c5",
+      "name": "Parafin",
+      "price": 15000,
+      "category": "children"
+    },
+    {
+      "id": "c6",
+      "name": "Elektrofarez",
+      "price": 15000,
+      "category": "children"
+    },
+    {
+      "id": "c7",
+      "name": "Gidrovanna",
+      "price": 70000,
+      "category": "children"
+    },
+    {
+      "id": "w1",
+      "name": "Boshdan belgacha",
+      "price": 80000,
+      "category": "women"
+    },
+    {
+      "id": "w2",
+      "name": "Oyoqlar",
+      "price": 80000,
+      "category": "women"
+    },
+    {
+      "id": "w3",
+      "name": "Obshiy massaj",
+      "price": 200000,
+      "category": "women"
+    },
+    {
+      "id": "w4",
+      "name": "Bosh massaj",
+      "price": 80000,
+      "category": "women"
+    },
+    {
+      "id": "w5",
+      "name": "Bankali massaj",
+      "price": 80000,
+      "category": "women"
+    },
+    {
+      "id": "w6",
+      "name": "Ozdiruvchi massaj",
+      "price": 200000,
+      "category": "women"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "b_1",
+      "clientName": "Mijoz",
+      "clientPhone": "+998901234567",
+      "serviceName": "2 oydan — 1 yoshgacha",
+      "price": 70000,
+      "date": "2026-05-30",
+      "time": "09:00",
+      "workerName": "Malika",
+      "comment": "Birinchi marta kelishi",
+      "status": "confirmed"
+    }
+  ]
+}
