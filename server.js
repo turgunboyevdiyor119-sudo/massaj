@@ -32,7 +32,7 @@ function getDB() {
         branches: 1,
         phone: "+998 99 879 06 76",
         address: "Yangi hayot tumani, Sputnik 16a, 25-uy",
-        hours: "Har kuni 08:00 — 18:00"
+        hours: "Dushanba — Shanba 08:00 — 18:00"
       },
       users: [
         { role: 'admin', username: 'admin', password: 'admin123', name: 'Administrator' },

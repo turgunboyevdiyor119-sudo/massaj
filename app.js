@@ -383,7 +383,7 @@ class BabyMassageApp {
       if (contactPhone) contactPhone.textContent = info.phone;
       
       const contactHours = document.getElementById('contact-hours');
-      if (contactHours) contactHours.textContent = `${info.hours} (Dam olish kunlarisiz)`;
+      if (contactHours) contactHours.textContent = `${info.hours} (Yakshanba dam olish kuni)`;
       
       const contactCallBtn = document.getElementById('contact-call-btn');
       if (contactCallBtn) contactCallBtn.href = `tel:${info.phone.replace(/\s+/g, '')}`;
