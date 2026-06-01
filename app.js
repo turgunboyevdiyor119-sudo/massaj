@@ -283,19 +283,30 @@ class BabyMassageApp {
         
         const formattedPrice = new Intl.NumberFormat('uz-UZ').format(service.price);
         const icon = this.currentPriceCategory === 'children' ? 'fa-baby' : 'fa-person-dress';
+        const defaultImg = this.currentPriceCategory === 'children' ? 'baby_card.png' : 'women_card.png';
+        const serviceImg = service.image || defaultImg;
         
         card.innerHTML = `
-          <div class="price-card-header">
+          <img class="price-card-img" src="${serviceImg}" alt="${service.name}" />
+          <div class="price-card-img-overlay"></div>
+          
+          <div class="price-card-icon-badge ${this.currentPriceCategory}">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+          
+          <div class="price-card-body">
             <span class="price-category-tag"><i class="fa-solid ${icon}"></i> ${this.currentPriceCategory === 'children' ? 'Bolalar' : 'Ayollar'}</span>
             <h3>${service.name}</h3>
+            
+            <div class="price-amount-box">
+              <span class="price-val">${formattedPrice}</span>
+              <span class="price-unit">so'm</span>
+            </div>
+            
+            <button class="btn btn-primary btn-sm" onclick="app.quickAction('booking', '${this.currentPriceCategory}', '${service.id}')">
+              <i class="fa-solid fa-calendar-check"></i> Bron qilish
+            </button>
           </div>
-          <div class="price-amount-box">
-            <span class="price-val">${formattedPrice}</span>
-            <span class="price-unit">so'm</span>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="app.quickAction('booking', '${this.currentPriceCategory}', '${service.id}')">
-            <i class="fa-solid fa-calendar-check"></i> Bron qilish
-          </button>
         `;
         grid.appendChild(card);
       });

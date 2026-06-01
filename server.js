@@ -41,19 +41,19 @@ function getDB() {
         { role: 'client', name: 'Mijoz', phone: '+998901234567', password: '12345' }
       ],
       services: [
-        { id: "c1", name: "2 oydan — 1 yoshgacha", price: 70000, category: "children" },
-        { id: "c2", name: "1 yoshdan — 3 yoshgacha", price: 80000, category: "children" },
-        { id: "c3", name: "4 yoshdan — 6 yoshgacha", price: 90000, category: "children" },
-        { id: "c4", name: "6 yoshdan — 9 yoshgacha", price: 100000, category: "children" },
-        { id: "c5", name: "Parafin", price: 15000, category: "children" },
-        { id: "c6", name: "Elektrofarez", price: 15000, category: "children" },
-        { id: "c7", name: "Gidrovanna", price: 70000, category: "children" },
-        { id: "w1", name: "Boshdan belgacha", price: 80000, category: "women" },
-        { id: "w2", name: "Oyoqlar", price: 80000, category: "women" },
-        { id: "w3", name: "Obshiy massaj", price: 200000, category: "women" },
-        { id: "w4", name: "Bosh massaj", price: 80000, category: "women" },
-        { id: "w5", name: "Bankali massaj", price: 80000, category: "women" },
-        { id: "w6", name: "Ozdiruvchi massaj", price: 200000, category: "women" }
+        { id: "c1", name: "2 oydan — 1 yoshgacha", price: 70000, category: "children", image: "assets/images/c1.png" },
+        { id: "c2", name: "1 yoshdan — 3 yoshgacha", price: 80000, category: "children", image: "assets/images/c2.png" },
+        { id: "c3", name: "4 yoshdan — 6 yoshgacha", price: 90000, category: "children", image: "assets/images/c3.png" },
+        { id: "c4", name: "6 yoshdan — 9 yoshgacha", price: 100000, category: "children", image: "assets/images/c4.png" },
+        { id: "c5", name: "Parafin", price: 15000, category: "children", image: "assets/images/c5.png" },
+        { id: "c6", name: "Elektrofarez", price: 15000, category: "children", image: "assets/images/c6.png" },
+        { id: "c7", name: "Gidrovanna", price: 70000, category: "children", image: "assets/images/c7.png" },
+        { id: "w1", name: "Boshdan belgacha", price: 80000, category: "women", image: "assets/images/w1.png" },
+        { id: "w2", name: "Oyoqlar", price: 80000, category: "women", image: "assets/images/w2.png" },
+        { id: "w3", name: "Obshiy massaj", price: 200000, category: "women", image: "assets/images/w3.png" },
+        { id: "w4", name: "Bosh massaj", price: 80000, category: "women", image: "assets/images/w4.png" },
+        { id: "w5", name: "Bankali massaj", price: 80000, category: "women", image: "assets/images/w5.png" },
+        { id: "w6", name: "Ozdiruvchi massaj", price: 200000, category: "women", image: "assets/images/w6.png" }
       ],
       bookings: [
         {
@@ -177,7 +177,8 @@ app.post('/api/services', (req, res) => {
     id: "s_" + Date.now(),
     name: req.body.name,
     category: req.body.category,
-    price: parseInt(req.body.price)
+    price: parseInt(req.body.price),
+    image: req.body.image || (req.body.category === 'children' ? 'baby_card.png' : 'women_card.png')
   };
   db.services.push(newService);
   saveDB(db);
