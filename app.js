@@ -47,7 +47,9 @@ class BabyMassageApp {
   async apiRequest(url, method = 'GET', body = null) {
     const user = this.getCurrentUser();
     const headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Bypass-Tunnel-Reminder': 'true',
+      'ngrok-skip-browser-warning': 'true'
     };
     
     // Simulate stateless session authentication using request headers
