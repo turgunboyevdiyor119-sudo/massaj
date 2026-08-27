@@ -36,8 +36,10 @@ function getDB() {
       },
       users: [
         { role: 'admin', username: 'admin', password: 'admin123', name: 'Administrator' },
-        { role: 'worker', username: 'malika', password: '12345', name: 'Malika' },
-        { role: 'worker', username: 'nodira', password: '12345', name: 'Nodira' },
+        { role: 'worker', username: 'shaxnoza', password: '12345', name: 'Shaxnoza' },
+        { role: 'worker', username: 'nilufar', password: '12345', name: 'Nilufar' },
+        { role: 'worker', username: 'yulduz', password: '12345', name: 'Yulduz' },
+        { role: 'worker', username: 'dilafruz', password: '12345', name: 'Dilafruz' },
         { role: 'client', name: 'Mijoz', phone: '+998901234567', password: '12345' }
       ],
       services: [
@@ -151,7 +153,7 @@ app.post('/api/auth/register', (req, res) => {
   const db = getDB();
   const users = db.users || [];
 
-  const exists = users.find(u => u.phone.replace(/\s+/g, '') === phone.replace(/\s+/g, ''));
+  const exists = users.find(u => u.phone && u.phone.replace(/\s+/g, '') === phone.replace(/\s+/g, ''));
   if (exists) {
     return res.status(400).json({ error: "Ushbu telefon raqami allaqachon ro'yxatdan o'tgan!" });
   }
@@ -384,7 +386,10 @@ app.put('/api/bookings/:id/reschedule', (req, res) => {
 
   booking.date = newDate;
   booking.time = newTime;
-  booking.status = 'pending'; // Reset to pending after reschedule
+  // Keep existing status if confirmed, otherwise set pending
+  if (booking.status !== 'confirmed' && booking.status !== 'cancelled') {
+    booking.status = 'pending';
+  }
   booking.rescheduled = true;
   saveDB(db);
   res.json({ success: true, booking });
@@ -398,6 +403,55 @@ app.delete('/api/bookings/:id', (req, res) => {
   db.bookings = db.bookings.filter(b => b.id !== req.params.id);
   saveDB(db);
   res.json({ success: true });
+});
+
+// 7. Certificates
+app.get('/api/certificates', (req, res) => {
+  const db = getDB();
+  res.json(db.certificates || []);
+});
+
+app.post('/api/certificates', (req, res) => {
+  if (req.user.role !== 'worker' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: "Faqat xodimlar sertifikat qo'sha oladi." });
+  }
+  const db = getDB();
+  if (!db.certificates) db.certificates = [];
+
+  const { title, imageUrl, description } = req.body;
+  if (!title || !imageUrl) {
+    return res.status(400).json({ error: "Sarlavha va rasm URL kiritilishi shart!" });
+  }
+
+  const newCert = {
+    id: 'cert_' + Date.now(),
+    workerName: req.user.name,
+    title,
+    imageUrl,
+    description: description || '',
+    addedAt: new Date().toISOString()
+  };
+  db.certificates.push(newCert);
+  saveDB(db);
+  res.json({ success: true, certificate: newCert });
+});
+
+app.delete('/api/certificates/:id', (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: "Faqat admin o'chirishi mumkin." });
+  const db = getDB();
+  if (!db.certificates) db.certificates = [];
+  db.certificates = db.certificates.filter(c => c.id !== req.params.id);
+  saveDB(db);
+  res.json({ success: true });
+});
+
+// SEO Static Routes
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, 'robots.txt'));
 });
 
 // Fallback to serve index.html for undefined front routes

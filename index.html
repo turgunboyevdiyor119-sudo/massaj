@@ -3,13 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baby Massage Center - Professional Massaj Markazi</title>
+  <title>Baby Massage Center - Toshkentdagi Professional Bolalar va Ayollar Massaji Markazi</title>
+  
+  <!-- Primary SEO Meta Tags -->
+  <meta name="title" content="Baby Massage Center - Toshkentdagi Professional Bolalar va Ayollar Massaji Markazi">
+  <meta name="description" content="Baby Massage Center (baby massaj centr) — Toshkent shahrida professional bolalar va ayollar massaji markazi. Sertifikatlangan malakali mutaxassislar, parafin, elektrofarez va gidrovanna muolajalari. Onlayn bron qilish va konsultatsiya.">
+  <meta name="keywords" content="Baby Massage Center, baby massaj centr, baby massage center toshkent, bolalar massaji, ayollar massaji, massaj markazi toshkent, parafin, elektrofarez, gidrovanna, Yangi hayot tumani massaj, Sputnik 16a">
+  <meta name="author" content="Baby Massage Center">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://massaj.uz/">
+  
+  <!-- Open Graph / Facebook / Telegram Card Metadata -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://massaj.uz/">
+  <meta property="og:title" content="Baby Massage Center - Professional Massaj Markazi">
+  <meta property="og:description" content="Toshkentdagi professional bolalar va ayollar massaji markazi. Malakali tabiblar, zamonaviy gigiyenik sharoit va arzon narxlar. Onlayn bron qiling!">
+  <meta property="og:image" content="assets/images/w1.png">
+
+  <!-- Twitter Card Metadata -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="Baby Massage Center - Professional Massaj Markazi">
+  <meta property="twitter:description" content="Toshkentdagi professional bolalar va ayollar massaji markazi. Onlayn bron qiling!">
+  <meta property="twitter:image" content="assets/images/w1.png">
+
+  <!-- Google Rich Snippet Structured Data (JSON-LD LocalBusiness) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HealthAndBeautyBusiness",
+    "name": "Baby Massage Center",
+    "alternateName": "baby massaj centr",
+    "image": "https://massaj.uz/assets/images/w1.png",
+    "@id": "https://massaj.uz/",
+    "url": "https://massaj.uz/",
+    "telephone": "+998998790676",
+    "priceRange": "15000 - 250000 UZS",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Sputnik 16a, 25-uy",
+      "addressLocality": "Yangi hayot tumani",
+      "addressRegion": "Tashkent",
+      "postalCode": "100000",
+      "addressCountry": "UZ"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 41.206278,
+      "longitude": 69.204556
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "08:00",
+      "closes": "18:00"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "128"
+    }
+  }
+  </script>
   
   <!-- FontAwesome for Premium Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -159,6 +229,13 @@
             <div class="feature-icon-wrapper"><i class="fa-solid fa-star"></i></div>
             <h3>5 Yulduzli xizmat</h3>
             <p>Shaxsiy yondashuv, qulay gigiyenik sharoitlar va oilaviy muhitda xizmat ko'rsatish.</p>
+          </div>
+
+          <!-- Certificates Card -->
+          <div class="feature-card glass-panel cert-feature-card" onclick="app.openCertificatesModal()" style="cursor: pointer; border: 1px solid rgba(245,158,11,0.3);">
+            <div class="feature-icon-wrapper" style="background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(245,158,11,0.05));"><i class="fa-solid fa-certificate" style="color: var(--accent-gold);"></i></div>
+            <h3 style="color: var(--accent-gold);">Sertifikatlar</h3>
+            <p>Mutaxassislarimizning tibbiy va professional sertifikatlarini ko'ring. <span style="color: var(--accent-gold); font-weight: 700;">Ko'rish →</span></p>
           </div>
         </div>
       </div>
@@ -429,7 +506,10 @@
               <p id="client-welcome-phone" style="color: var(--text-muted); font-size: 0.9rem;">+998 90 123 45 67</p>
             </div>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="app.handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-outline-gold btn-sm" onclick="app.openEditProfileModal()"><i class="fa-solid fa-user-pen"></i> Profil</button>
+            <button class="btn btn-secondary btn-sm" onclick="app.handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+          </div>
         </div>
         
         <div class="glass-panel">
@@ -489,8 +569,14 @@
           </div>
         </div>
         
+        <!-- Worker Dashboard Tabs -->
+        <div class="worker-tabs" style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+          <button class="tab-btn active" id="worker-tab-today" onclick="app.switchWorkerTab('today')"><i class="fa-solid fa-calendar-day"></i> Bugun</button>
+          <button class="tab-btn" id="worker-tab-upcoming" onclick="app.switchWorkerTab('upcoming')"><i class="fa-solid fa-calendar-week"></i> Kelgusi bronlar</button>
+        </div>
+
         <!-- Two Column Dashboard layout -->
-        <div class="worker-card-grid">
+        <div class="worker-card-grid" id="worker-today-view">
           <!-- Column 1: Today's Bookings List -->
           <div class="glass-panel">
             <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-calendar-day"></i> Bugungi mijozlar jadvali</h3>
@@ -547,6 +633,17 @@
           </div>
         </div>
 
+        <!-- Worker Certificates Section -->
+        <div class="glass-panel" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(30,58,138,0.12)); border: 1px solid rgba(245,158,11,0.2);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-family: var(--font-title);"><i class="fa-solid fa-certificate" style="color: var(--accent-gold);"></i> Mening sertifikatlarim</h3>
+            <button class="btn btn-outline-gold btn-sm" onclick="app.openAddCertificateModal()"><i class="fa-solid fa-plus"></i> Sertifikat qo'shish</button>
+          </div>
+          <div id="worker-certificates-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
         <!-- Monthly Earnings Summary for Worker -->
         <div class="glass-panel" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(30,58,138,0.15));">
           <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-wallet"></i> Mening oylik daromadam (50% ulush)</h3>
@@ -567,6 +664,31 @@
         </div>
 
       </div>
+
+      <!-- Upcoming Bookings View (hidden by default) -->
+      <div id="worker-upcoming-view" style="display: none;">
+        <div class="glass-panel">
+          <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-calendar-week"></i> Kelgusi bronlar (Bugundan keyingi)</h3>
+          <div class="bookings-table-wrapper">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sana</th>
+                  <th>Vaqt</th>
+                  <th>Mijoz</th>
+                  <th>Xizmat</th>
+                  <th>Holati</th>
+                  <th>Amal</th>
+                </tr>
+              </thead>
+              <tbody id="worker-upcoming-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- 6. ADMIN DASHBOARD VIEW (Admin panel) -->
@@ -618,6 +740,18 @@
               </div>
             </div>
             
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+              <div class="glass-panel">
+                <h4 style="font-family: var(--font-title); margin-bottom: 1rem; font-size: 0.95rem;"><i class="fa-solid fa-chart-bar"></i> Haftalik bronlar</h4>
+                <canvas id="chart-weekly-bookings" height="160"></canvas>
+              </div>
+              <div class="glass-panel">
+                <h4 style="font-family: var(--font-title); margin-bottom: 1rem; font-size: 0.95rem;"><i class="fa-solid fa-chart-pie"></i> Holat bo'yicha taqsimot</h4>
+                <canvas id="chart-status-donut" height="160"></canvas>
+              </div>
+            </div>
+
             <div class="glass-panel" style="margin-top: 2rem;">
               <h3 style="font-family: var(--font-title); margin-bottom: 1.5rem;"><i class="fa-solid fa-bell"></i> Oxirgi faolliklar (So'nggi bronlar)</h3>
               <div class="bookings-table-wrapper">

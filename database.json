@@ -1,9 +1,8 @@
 {
   "center_info": {
     "name": "Baby Massage Center",
-    "branches": 1,
     "phone": "+998 99 879 06 76",
-    "address": "Yangi hayot tumani, Sputnik 16a, 25-uy",
+    "address": "Yangi hayot tumani, Sputnik 16a, 21-uy",
     "hours": "Dushanba — Shanba 08:00 — 18:00"
   },
   "users": [
@@ -18,27 +17,69 @@
       "name": "Mijoz",
       "phone": "+998901234567",
       "password": "12345"
+    },
+    {
+      "role": "client",
+      "name": "admin",
+      "phone": "+998909998022",
+      "password": "admin123"
+    },
+    {
+      "role": "worker",
+      "name": "Shaxnoza",
+      "username": "shaxnoza",
+      "password": "12345"
+    },
+    {
+      "role": "worker",
+      "name": "Nilufar",
+      "username": "nilufar",
+      "password": "12345"
+    },
+    {
+      "role": "worker",
+      "name": "Yulduz",
+      "username": "yulduz",
+      "password": "12345"
+    },
+    {
+      "role": "worker",
+      "name": "Dilafruz",
+      "username": "dilafruz",
+      "password": "12345"
+    },
+    {
+      "role": "client",
+      "name": "Nilufar",
+      "phone": "+998998790676",
+      "password": "12345"
+    },
+    {
+      "role": "client",
+      "name": "Nilufar",
+      "phone": "+998998790636",
+      "password": "12345"
     }
   ],
   "services": [
     {
       "id": "c1",
       "name": "2 oydan — 1 yoshgacha",
-      "price": 70000,
+      "price": 80000,
       "category": "children",
       "image": "assets/images/c1.png"
     },
     {
       "id": "c2",
       "name": "1 yoshdan — 3 yoshgacha",
-      "price": 80000,
+      "price": 90000,
       "category": "children",
       "image": "assets/images/c2.png"
     },
     {
       "id": "c3",
       "name": "4 yoshdan — 6 yoshgacha",
-      "price": 90000,
+      "price": 100000,
       "category": "children",
       "image": "assets/images/c3.png"
     },
@@ -66,21 +107,21 @@
     {
       "id": "c7",
       "name": "Gidrovanna",
-      "price": 70000,
+      "price": 80000,
       "category": "children",
       "image": "assets/images/c7.png"
     },
     {
       "id": "w1",
       "name": "Boshdan belgacha",
-      "price": 80000,
+      "price": 90000,
       "category": "women",
       "image": "assets/images/w1.png"
     },
     {
       "id": "w2",
       "name": "Oyoqlar",
-      "price": 80000,
+      "price": 90000,
       "category": "women",
       "image": "assets/images/w2.png"
     },
@@ -101,30 +142,53 @@
     {
       "id": "w5",
       "name": "Bankali massaj",
-      "price": 80000,
+      "price": 90000,
       "category": "women",
       "image": "assets/images/w5.png"
     },
     {
       "id": "w6",
       "name": "Ozdiruvchi massaj",
-      "price": 200000,
+      "price": 250000,
       "category": "women",
       "image": "assets/images/w6.png"
     }
   ],
   "bookings": [
     {
-      "id": "b_1",
-      "clientName": "Mijoz",
-      "clientPhone": "+998901234567",
-      "serviceName": "2 oydan — 1 yoshgacha",
-      "price": 70000,
-      "date": "2026-05-30",
-      "time": "09:00",
-      "workerName": "Malika",
-      "comment": "Birinchi marta kelishi",
+      "id": "b_1787818049566",
+      "clientName": "Nilufar",
+      "clientPhone": "+998998790676",
+      "serviceName": "6 yoshdan — 9 yoshgacha",
+      "price": 100000,
+      "date": "2026-08-27",
+      "time": "17:00",
+      "workerName": "Shaxnoza",
+      "comment": "",
       "status": "confirmed"
+    },
+    {
+      "id": "b_1787818097779",
+      "clientName": "Nilufar",
+      "clientPhone": "+998998790636",
+      "serviceName": "Ozdiruvchi massaj",
+      "price": 250000,
+      "date": "2026-08-27",
+      "time": "14:45",
+      "workerName": "Shaxnoza",
+      "comment": "",
+      "status": "confirmed",
+      "rescheduled": true
+    }
+  ],
+  "certificates": [
+    {
+      "id": "cert_1787818405792",
+      "workerName": "Shaxnoza",
+      "title": "cxXXVSDDV",
+      "imageUrl": "SDVvDSVC",
+      "description": "dDVvSDV",
+      "addedAt": "2026-08-27T08:13:25.792Z"
     }
   ]
 }

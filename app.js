@@ -11,6 +11,8 @@ class BabyMassageApp {
     this.bookingStep = 1;
     this.selectedTimeSlot = null;
     this.activeAdminSection = 'stats';
+    this.activeWorkerTab = 'today';
+    this.chartInstances = {};
     
     // Loaded lists cache to avoid redundant API hits
     this.cachedServices = [];
@@ -577,10 +579,18 @@ class BabyMassageApp {
 
         if (b.status === 'pending') {
           statusLabel = `<span class="status-badge status-pending"><i class="fa-solid fa-hourglass-half"></i> Kutilmoqda</span>`;
-          cancelBtn = `<button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.cancelBooking('${b.id}')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>`;
+          cancelBtn = `
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
+              <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.cancelBooking('${b.id}')"><i class="fa-solid fa-xmark"></i> Bekor</button>
+            </div>`;
         } else if (b.status === 'confirmed') {
           statusLabel = `<span class="status-badge status-confirmed"><i class="fa-solid fa-circle-check"></i> Tasdiqlangan</span>`;
-          cancelBtn = `<button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.cancelBooking('${b.id}')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>`;
+          cancelBtn = `
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
+              <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.cancelBooking('${b.id}')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>
+            </div>`;
         } else {
           statusLabel = `<span class="status-badge status-cancelled"><i class="fa-solid fa-ban"></i> Bekor qilingan</span>`;
           cancelBtn = `<span style="color: var(--text-muted); font-size: 0.8rem;">Yo'q</span>`;
@@ -611,6 +621,202 @@ class BabyMassageApp {
         this.showAlert(err.message, 'danger');
       }
     }
+  }
+
+  // Open reschedule modal for client
+  async openRescheduleModal(bookingId) {
+    const workers = await this.apiRequest('/api/workers');
+    const today = this.getTashkentDateString(0);
+    const nextDay = this.getNextWorkingDay(today);
+
+    const workerOptions = workers.map(w => `<option value="${w.name}">${w.name}</option>`).join('');
+
+    const modalBody = document.getElementById('modal-body-content');
+    modalBody.innerHTML = `
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-title);"><i class="fa-solid fa-calendar-pen"></i> Bron vaqtini o'zgartirish</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Yangi sana, xodim va vaqtni tanlang</p>
+      <form onsubmit="app.handleReschedule(event, '${bookingId}')">
+        <div class="form-group">
+          <label>Yangi sana</label>
+          <div class="form-control-wrapper">
+            <i class="fa-solid fa-calendar-days"></i>
+            <input type="date" id="reschedule-date" class="form-control" min="${nextDay}" value="${nextDay}" required onchange="app.loadRescheduleSlots()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Xodim</label>
+          <select id="reschedule-worker" class="form-control" style="padding-left: 1rem;" onchange="app.loadRescheduleSlots()">
+            ${workerOptions}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Vaqt tanlang</label>
+          <div class="slots-grid" id="reschedule-slots-grid" style="margin-top: 0.5rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Yuqoridagi ma'lumotlarni tanlang...</p>
+          </div>
+        </div>
+        <input type="hidden" id="reschedule-selected-time" value="">
+        <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-floppy-disk"></i> O'zgartirishni saqlash</button>
+      </form>
+    `;
+    this.openModal();
+    await this.loadRescheduleSlots();
+  }
+
+  async loadRescheduleSlots() {
+    const slotsGrid = document.getElementById('reschedule-slots-grid');
+    const dateInput = document.getElementById('reschedule-date');
+    const workerInput = document.getElementById('reschedule-worker');
+    if (!slotsGrid || !dateInput || !workerInput) return;
+
+    const dateVal = dateInput.value;
+    const workerVal = workerInput.value;
+
+    slotsGrid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-spinner fa-spin"></i> Vaqtlar yuklanmoqda...</p>';
+
+    const selectedDay = new Date(dateVal + 'T00:00:00').getDay();
+    if (selectedDay === 0) {
+      slotsGrid.innerHTML = '<p style="color: var(--accent-gold);"><i class="fa-solid fa-moon"></i> Yakshanba — dam olish kuni.</p>';
+      return;
+    }
+
+    try {
+      const busySlots = await this.apiRequest('/api/bookings/busy');
+      slotsGrid.innerHTML = '';
+
+      const slots = [];
+      let sm = 8 * 60;
+      while (sm + 45 <= 18 * 60) {
+        const h = Math.floor(sm / 60);
+        const m = sm % 60;
+        slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+        sm += 45;
+      }
+
+      let selectedTime = null;
+
+      slots.forEach(slot => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'slot-btn';
+        button.textContent = slot;
+
+        const slotStart = this.timeToMinutes(slot);
+        const slotEnd = slotStart + 45;
+        const isOccupied = busySlots.some(b => {
+          if (b.date !== dateVal || b.workerName.toLowerCase() !== workerVal.toLowerCase()) return false;
+          const bs = this.timeToMinutes(b.time);
+          const be = bs + 45;
+          return slotStart < be && slotEnd > bs;
+        });
+
+        if (isOccupied) {
+          button.disabled = true;
+          button.title = 'Band';
+        } else {
+          button.onclick = () => {
+            slotsGrid.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            selectedTime = slot;
+            const hiddenInput = document.getElementById('reschedule-selected-time');
+            if (hiddenInput) hiddenInput.value = slot;
+          };
+        }
+        slotsGrid.appendChild(button);
+      });
+    } catch (err) {
+      slotsGrid.innerHTML = '<p style="color: red;">Xatolik yuz berdi.</p>';
+    }
+  }
+
+  async handleReschedule(e, bookingId) {
+    e.preventDefault();
+    const newDate = document.getElementById('reschedule-date').value;
+    const newTime = document.getElementById('reschedule-selected-time').value;
+
+    if (!newTime) {
+      this.showAlert('Iltimos, yangi vaqtni tanlang!', 'warning');
+      return;
+    }
+
+    try {
+      await this.apiRequest(`/api/bookings/${bookingId}/reschedule`, 'PUT', { newDate, newTime });
+      this.showAlert('Bron vaqti muvaffaqiyatli o\'zgartirildi!', 'success');
+      this.closeModal();
+      
+      const user = this.getCurrentUser();
+      if (user && user.role === 'admin') {
+        await this.renderAdminBookings();
+        await this.renderAdminStats();
+      } else if (user && user.role === 'worker') {
+        await this.renderWorkerDashboard();
+        if (this.activeWorkerTab === 'upcoming') {
+          await this.renderWorkerUpcoming();
+        }
+      } else {
+        await this.renderClientDashboard();
+      }
+    } catch (err) {
+      this.showAlert(err.message, 'danger');
+    }
+  }
+
+  // Open profile edit modal
+  openEditProfileModal() {
+    const user = this.getCurrentUser();
+    if (!user) return;
+
+    const modalBody = document.getElementById('modal-body-content');
+    modalBody.innerHTML = `
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-title);"><i class="fa-solid fa-user-pen"></i> Profilni tahrirlash</h3>
+      <form onsubmit="app.handleProfileUpdate(event)">
+        <div class="form-group">
+          <label>Ismingiz</label>
+          <div class="form-control-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="edit-profile-name" class="form-control" required value="${user.name}" placeholder="Ismingiz">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Yangi parol (ixtiyoriy)</label>
+          <div class="form-control-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="edit-profile-password" class="form-control" placeholder="Bo'sh qoldiring — o'zgarmaydi">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-floppy-disk"></i> Saqlash</button>
+      </form>
+    `;
+    this.openModal();
+  }
+
+  async handleProfileUpdate(e) {
+    e.preventDefault();
+    const user = this.getCurrentUser();
+    if (!user) return;
+
+    const newName = document.getElementById('edit-profile-name').value.trim();
+    const newPass = document.getElementById('edit-profile-password').value;
+
+    if (!newName) {
+      this.showAlert('Ism bo\'sh bo\'lishi mumkin emas!', 'warning');
+      return;
+    }
+
+    // Update in localStorage
+    user.name = newName;
+    if (newPass && newPass.length >= 4) {
+      user.password = newPass;
+    } else if (newPass && newPass.length > 0 && newPass.length < 4) {
+      this.showAlert('Parol kamida 4 ta belgidan iborat bo\'lishi kerak!', 'warning');
+      return;
+    }
+
+    localStorage.setItem('bmc_active_user', JSON.stringify(user));
+    this.showAlert('Profil ma\'lumotlari yangilandi!', 'success');
+    this.closeModal();
+    await this.renderClientDashboard();
+    await this.renderCenterLayoutDetails();
   }
 
   // ---------------- BOOKING PROCESS ENGINE ----------------
@@ -856,6 +1062,9 @@ class BabyMassageApp {
     document.getElementById('worker-welcome-name').textContent = `Xush kelibsiz, ${user.name}!`;
     document.getElementById('worker-avatar-letter').textContent = user.name.charAt(0).toUpperCase();
 
+    // Render worker certificates list
+    await this.renderWorkerCertificates();
+
     try {
       const bookings = await this.apiRequest('/api/bookings');
       const todayStr = this.getTashkentDateString(0);
@@ -903,14 +1112,20 @@ class BabyMassageApp {
             if (b.status === 'pending') {
               statusLabel = `<span class="status-badge status-pending"><i class="fa-solid fa-hourglass"></i> Kutilmoqda</span>`;
               actionButtons = `
-                <div style="display: flex; gap: 0.5rem;">
-                  <button class="btn btn-success btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'confirmed')"><i class="fa-solid fa-check"></i> Tasdiqlash</button>
-                  <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor</button>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button class="btn btn-success btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'confirmed')"><i class="fa-solid fa-check"></i> Tasdiqlash</button>
+                  <button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
+                  <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor</button>
                 </div>
               `;
             } else if (b.status === 'confirmed') {
               statusLabel = `<span class="status-badge status-confirmed"><i class="fa-solid fa-circle-check"></i> Tasdiqlangan</span>`;
-              actionButtons = `<button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>`;
+              actionButtons = `
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
+                  <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor</button>
+                </div>
+              `;
             } else {
               statusLabel = `<span class="status-badge status-cancelled"><i class="fa-solid fa-ban"></i> Bekor qilingan</span>`;
               actionButtons = `<span style="color: var(--text-muted); font-size: 0.8rem;">Amal bajarib bo'lmaydi</span>`;
@@ -1004,6 +1219,75 @@ class BabyMassageApp {
       }
     } catch (err) {
       this.showAlert("Jadvalni yuklashda xatolik yuz berdi.", "danger");
+    }
+  }
+
+  // Switch between Today / Upcoming tabs in worker dashboard
+  switchWorkerTab(tab) {
+    this.activeWorkerTab = tab;
+    const todayView = document.getElementById('worker-today-view');
+    const upcomingView = document.getElementById('worker-upcoming-view');
+    const todayTabBtn = document.getElementById('worker-tab-today');
+    const upcomingTabBtn = document.getElementById('worker-tab-upcoming');
+
+    if (tab === 'today') {
+      if (todayView) todayView.style.display = '';
+      if (upcomingView) upcomingView.style.display = 'none';
+      if (todayTabBtn) todayTabBtn.classList.add('active');
+      if (upcomingTabBtn) upcomingTabBtn.classList.remove('active');
+    } else {
+      if (todayView) todayView.style.display = 'none';
+      if (upcomingView) upcomingView.style.display = '';
+      if (todayTabBtn) todayTabBtn.classList.remove('active');
+      if (upcomingTabBtn) upcomingTabBtn.classList.add('active');
+      this.renderWorkerUpcoming();
+    }
+  }
+
+  // Render upcoming (future) bookings for worker
+  async renderWorkerUpcoming() {
+    const tbody = document.getElementById('worker-upcoming-tbody');
+    if (!tbody) return;
+
+    try {
+      const bookings = await this.apiRequest('/api/bookings');
+      const todayStr = this.getTashkentDateString(0);
+
+      const upcoming = bookings
+        .filter(b => b.date > todayStr && b.status !== 'cancelled')
+        .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+      tbody.innerHTML = '';
+
+      if (upcoming.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Kelgusi bronlar mavjud emas.</td></tr>`;
+        return;
+      }
+
+      upcoming.forEach(b => {
+        const tr = document.createElement('tr');
+        const badge = b.status === 'confirmed'
+          ? `<span class="status-badge status-confirmed"><i class="fa-solid fa-circle-check"></i> Tasdiqlangan</span>`
+          : `<span class="status-badge status-pending"><i class="fa-solid fa-hourglass"></i> Kutilmoqda</span>`;
+
+        const actions = `
+          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+            ${b.status === 'pending' ? `<button class="btn btn-success btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.updateBookingStatusByWorker('${b.id}', 'confirmed')"><i class="fa-solid fa-check"></i> Tasdiqlash</button>` : ''}
+            <button class="btn btn-outline-gold btn-sm" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
+          </div>`;
+
+        tr.innerHTML = `
+          <td><strong>${b.date}</strong></td>
+          <td><strong>${b.time}</strong></td>
+          <td>${b.clientName}<br><span style="font-size: 0.75rem; color: var(--text-muted);">${b.clientPhone}</span></td>
+          <td>${b.serviceName}</td>
+          <td>${badge}</td>
+          <td>${actions}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      this.showAlert("Kelgusi bronlarni yuklashda xatolik yuz berdi.", "danger");
     }
   }
 
@@ -1122,7 +1406,14 @@ class BabyMassageApp {
         
         sorted.forEach(b => {
           const tr = document.createElement('tr');
-          const formattedPrice = new Intl.NumberFormat('uz-UZ').format(b.price) + ' UZS';
+          const totalAmt = b.price;
+          const halfAmt = Math.floor(totalAmt / 2);
+          const formattedPrice = `
+            <div><strong>${new Intl.NumberFormat('uz-UZ').format(totalAmt)} UZS</strong></div>
+            <div style="font-size: 0.75rem; color: var(--accent-gold); margin-top: 2px;">
+              <i class="fa-solid fa-arrows-split-up-and-left"></i> 50/50: Ishchi: ${new Intl.NumberFormat('uz-UZ').format(halfAmt)} | Markaz: ${new Intl.NumberFormat('uz-UZ').format(totalAmt - halfAmt)}
+            </div>
+          `;
           
           let badge = '';
           if (b.status === 'pending') badge = `<span class="status-badge status-pending">Kutilmoqda</span>`;
@@ -1134,15 +1425,92 @@ class BabyMassageApp {
             <td><strong>${b.clientName}</strong></td>
             <td>${b.serviceName}</td>
             <td>${b.date} / ${b.time}</td>
-            <td>${b.workerName}</td>
+            <td><strong>${b.workerName}</strong></td>
             <td>${formattedPrice}</td>
             <td>${badge}</td>
           `;
           recentTbody.appendChild(tr);
         });
       }
+
+      // Render Charts
+      this.renderAdminCharts(bookings, todayStr);
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  renderAdminCharts(bookings, todayStr) {
+    // ---- Weekly Bookings Bar Chart ----
+    const weekLabels = [];
+    const weekCounts = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(todayStr + 'T00:00:00');
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayNames = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
+      weekLabels.push(dayNames[d.getDay()]);
+      weekCounts.push(bookings.filter(b => b.date === dateStr && b.status !== 'cancelled').length);
+    }
+
+    const weekCtx = document.getElementById('chart-weekly-bookings');
+    if (weekCtx) {
+      if (this.chartInstances['weekly']) this.chartInstances['weekly'].destroy();
+      this.chartInstances['weekly'] = new Chart(weekCtx, {
+        type: 'bar',
+        data: {
+          labels: weekLabels,
+          datasets: [{
+            label: 'Bronlar',
+            data: weekCounts,
+            backgroundColor: 'rgba(245,158,11,0.7)',
+            borderColor: 'rgba(245,158,11,1)',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#94A3B8', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    // ---- Status Donut Chart ----
+    const pending = bookings.filter(b => b.status === 'pending').length;
+    const confirmed = bookings.filter(b => b.status === 'confirmed').length;
+    const cancelled = bookings.filter(b => b.status === 'cancelled').length;
+
+    const donutCtx = document.getElementById('chart-status-donut');
+    if (donutCtx) {
+      if (this.chartInstances['donut']) this.chartInstances['donut'].destroy();
+      this.chartInstances['donut'] = new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Kutilmoqda', 'Tasdiqlangan', 'Bekor qilingan'],
+          datasets: [{
+            data: [pending, confirmed, cancelled],
+            backgroundColor: ['rgba(245,158,11,0.8)', 'rgba(34,197,94,0.8)', 'rgba(239,68,68,0.8)'],
+            borderColor: ['rgba(245,158,11,1)', 'rgba(34,197,94,1)', 'rgba(239,68,68,1)'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { color: '#94A3B8', font: { size: 11 }, padding: 12 }
+            }
+          }
+        }
+      });
     }
   }
 
@@ -1170,7 +1538,14 @@ class BabyMassageApp {
 
       filtered.forEach(b => {
         const tr = document.createElement('tr');
-        const formattedPrice = new Intl.NumberFormat('uz-UZ').format(b.price) + ' UZS';
+        const totalAmt = b.price;
+        const halfAmt = Math.floor(totalAmt / 2);
+        const formattedPrice = `
+          <div><strong>${new Intl.NumberFormat('uz-UZ').format(totalAmt)} UZS</strong></div>
+          <div style="font-size: 0.75rem; color: var(--accent-gold); margin-top: 2px;">
+            50%: Ishchi <strong>${new Intl.NumberFormat('uz-UZ').format(halfAmt)}</strong> | Markaz <strong>${new Intl.NumberFormat('uz-UZ').format(totalAmt - halfAmt)}</strong>
+          </div>
+        `;
 
         let statusBadge = '';
         let actions = '';
@@ -1179,11 +1554,13 @@ class BabyMassageApp {
           statusBadge = `<span class="status-badge status-pending">Kutilmoqda</span>`;
           actions = `
             <button class="btn btn-success btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="app.adminUpdateBooking('${b.id}', 'confirmed')"><i class="fa-solid fa-check"></i> Tasdiqlash</button>
+            <button class="btn btn-outline-gold btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
             <button class="btn btn-danger btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="app.adminUpdateBooking('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>
           `;
         } else if (b.status === 'confirmed') {
           statusBadge = `<span class="status-badge status-confirmed">Tasdiqlangan</span>`;
           actions = `
+            <button class="btn btn-outline-gold btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="app.openRescheduleModal('${b.id}')"><i class="fa-solid fa-calendar-pen"></i> Vaqtni ko'chirish</button>
             <button class="btn btn-danger btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="app.adminUpdateBooking('${b.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Bekor qilish</button>
           `;
         } else {
@@ -1197,9 +1574,9 @@ class BabyMassageApp {
           <td>${b.clientPhone}</td>
           <td>${b.serviceName}</td>
           <td>${b.date} / <strong>${b.time}</strong></td>
-          <td>${b.workerName}</td>
+          <td><strong>${b.workerName}</strong></td>
           <td>${statusBadge}</td>
-          <td><div style="display: flex; gap: 0.4rem;">${actions}</div></td>
+          <td><div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">${actions}</div></td>
         `;
         tbody.appendChild(tr);
       });
@@ -1601,6 +1978,109 @@ class BabyMassageApp {
       await this.renderCenterLayoutDetails();
     } catch (err) {
       this.showAlert(err.message, 'danger');
+    }
+  }
+
+  // ---------------- CERTIFICATES SYSTEM ----------------
+
+  async openCertificatesModal() {
+    try {
+      const certificates = await this.apiRequest('/api/certificates');
+      const modalBody = document.getElementById('modal-body-content');
+      
+      if (!certificates || certificates.length === 0) {
+        modalBody.innerHTML = `
+          <h3 style="margin-bottom: 1rem; font-family: var(--font-title);"><i class="fa-solid fa-certificate" style="color: var(--accent-gold);"></i> Sertifikatlar</h3>
+          <p style="text-size: 0.9rem; color: var(--text-muted); text-align: center; margin: 2rem 0;">Hozircha sertifikatlar yuklanmagan.</p>
+        `;
+      } else {
+        let certsHtml = certificates.map(c => `
+          <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 1rem; border: 1px solid var(--border-glass);">
+            <img src="${c.imageUrl}" alt="${c.title}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 0.8rem;" onerror="this.src='baby_card.png'">
+            <h4 style="font-size: 1rem; margin-bottom: 0.3rem;">${c.title}</h4>
+            <p style="font-size: 0.8rem; color: var(--accent-gold); margin-bottom: 0.5rem;"><i class="fa-solid fa-user-md"></i> ${c.workerName}</p>
+            ${c.description ? `<p style="font-size: 0.8rem; color: var(--text-muted);">${c.description}</p>` : ''}
+          </div>
+        `).join('');
+
+        modalBody.innerHTML = `
+          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-title);"><i class="fa-solid fa-certificate" style="color: var(--accent-gold);"></i> Mutaxassislarimiz Sertifikatlari</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; max-height: 70vh; overflow-y: auto; padding-right: 0.5rem;">
+            ${certsHtml}
+          </div>
+        `;
+      }
+      this.openModal();
+    } catch (err) {
+      this.showAlert("Sertifikatlarni yuklashda xatolik.", "danger");
+    }
+  }
+
+  async renderWorkerCertificates() {
+    const listContainer = document.getElementById('worker-certificates-list');
+    if (!listContainer) return;
+
+    try {
+      const certificates = await this.apiRequest('/api/certificates');
+      const user = this.getCurrentUser();
+      const myCerts = certificates.filter(c => c.workerName === user.name);
+
+      listContainer.innerHTML = '';
+      if (myCerts.length === 0) {
+        listContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; grid-column: 1 / -1;">Siz hali sertifikat yuklamadingiz.</p>`;
+        return;
+      }
+
+      myCerts.forEach(c => {
+        const item = document.createElement('div');
+        item.style.cssText = 'background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem; border: 1px solid var(--border-glass);';
+        item.innerHTML = `
+          <img src="${c.imageUrl}" alt="${c.title}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem;" onerror="this.src='baby_card.png'">
+          <h5 style="font-size: 0.85rem; font-weight: 600;">${c.title}</h5>
+        `;
+        listContainer.appendChild(item);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  openAddCertificateModal() {
+    const modalBody = document.getElementById('modal-body-content');
+    modalBody.innerHTML = `
+      <h3 style="margin-bottom: 1rem; font-family: var(--font-title);"><i class="fa-solid fa-file-circle-plus"></i> Yangi sertifikat qo'shish</h3>
+      <form onsubmit="app.handleAddCertificate(event)">
+        <div class="form-group">
+          <label>Sertifikat nomi / Yo'nalishi</label>
+          <input type="text" id="cert-title" class="form-control" style="padding-left: 1rem;" placeholder="Masalan: Bolalar massaji bo'yicha ilmiy sertifikat" required>
+        </div>
+        <div class="form-group">
+          <label>Rasm URL (Internet / fayl manzili)</label>
+          <input type="text" id="cert-url" class="form-control" style="padding-left: 1rem;" placeholder="assets/images/w1.png yoki https://..." required>
+        </div>
+        <div class="form-group">
+          <label>Qisqacha ta'rif (ixtiyoriy)</label>
+          <textarea id="cert-desc" class="form-control" style="padding: 0.8rem;" rows="2" placeholder="Sertifikat haqida..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-floppy-disk"></i> Qo'shish</button>
+      </form>
+    `;
+    this.openModal();
+  }
+
+  async handleAddCertificate(e) {
+    e.preventDefault();
+    const title = document.getElementById('cert-title').value.trim();
+    const imageUrl = document.getElementById('cert-url').value.trim();
+    const description = document.getElementById('cert-desc').value.trim();
+
+    try {
+      await this.apiRequest('/api/certificates', 'POST', { title, imageUrl, description });
+      this.showAlert("Sertifikat muvaffaqiyatli qo'shildi!", "success");
+      this.closeModal();
+      await this.renderWorkerCertificates();
+    } catch (err) {
+      this.showAlert(err.message, "danger");
     }
   }
 
