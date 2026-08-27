@@ -165,7 +165,9 @@
       "time": "17:00",
       "workerName": "Shaxnoza",
       "comment": "",
-      "status": "confirmed"
+      "status": "confirmed",
+      "procedureNote": "reagregef",
+      "noteDate": "2026-08-27T08:24:13.220Z"
     },
     {
       "id": "b_1787818097779",
@@ -178,7 +180,9 @@
       "workerName": "Shaxnoza",
       "comment": "",
       "status": "confirmed",
-      "rescheduled": true
+      "rescheduled": true,
+      "procedureNote": "regergergv",
+      "noteDate": "2026-08-27T08:24:15.716Z"
     }
   ],
   "certificates": [
